@@ -87,6 +87,9 @@ vim.o.confirm = true
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- Remap <leader>p to paste over currently selected text without yanking it
+vim.keymap.set('x', '<leader>p', [["_dP]])
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
@@ -698,6 +701,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        ps1 = { 'psscriptanalyzer' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -898,7 +902,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lazygit.nvim',
+  require 'kickstart.plugins.lazygit',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
@@ -922,6 +926,9 @@ require('lazy').setup({
     opts = {
       view_options = {
         show_hidden = true,
+        is_always_hidden = function(name)
+          return name == '.git' or name == 'node_modules'
+        end,
       },
     },
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
