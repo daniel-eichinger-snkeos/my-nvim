@@ -493,9 +493,13 @@ require('lazy').setup({
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
-          -- Fuzzy find all the symbols in your current document.
+          -- Fuzzy find functions in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
+          map('gO', function()
+            require('telescope.builtin').lsp_document_symbols {
+              symbols = { 'Function', 'Method' }
+            }
+          end, 'List functions/methods in file')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
