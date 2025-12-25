@@ -1,4 +1,4 @@
-vim.opt.tabstop = 4      -- Display width of a tab character
+vim.opt.tabstop = 4 -- Display width of a tab character
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -497,7 +497,7 @@ require('lazy').setup({
           --  Symbols are things like variables, functions, types, etc.
           map('gO', function()
             require('telescope.builtin').lsp_document_symbols {
-              symbols = { 'Function', 'Method' }
+              symbols = { 'Function', 'Method' },
             }
           end, 'List functions/methods in file')
 
@@ -837,6 +837,18 @@ require('lazy').setup({
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
+      require('mini.pairs').setup()
+
+      require('mini.move').setup {
+        mappings = {
+          -- Move visual selection in Visual mode.
+          left = '',
+          right = '',
+          down = 'J',
+          up = 'K',
+        },
+      }
+
       -- Better Around/Inside textobjects
       --
       -- Examples:
@@ -874,7 +886,7 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
