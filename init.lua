@@ -838,6 +838,7 @@ require('lazy').setup({
     'echasnovski/mini.nvim',
     config = function()
       require('mini.pairs').setup()
+      require('mini.comment').setup()
 
       require('mini.move').setup {
         mappings = {
