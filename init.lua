@@ -7,7 +7,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
@@ -115,8 +115,11 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+-- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+-- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<C-j>', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<C-k>', '<cmd>cprev<CR>zz')
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -864,6 +867,35 @@ require('lazy').setup({
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
+      require('mini.comment').setup()
+
+      -- Starting page for nvim
+      require('mini.starter').setup()
+
+      -- S is for 'Session'. Common usage:
+      -- - `<Leader>Sn` - start new session
+      -- - `<Leader>Sr` - read previously started session
+      -- - `<Leader>Sd` - delete previously started session
+      require('mini.sessions').setup()
+      local session_new = 'MiniSessions.write(vim.fn.input("Session name: "))'
+      vim.keymap.set('n', '<leader>Sn', '<Cmd>lua ' .. session_new .. '<CR>', { desc = '[S]ession [N]ew' })
+      vim.keymap.set('n', '<leader>Sd', '<Cmd>lua MiniSessions.select("delete")<CR>', { desc = '[S]ession [d]elete' })
+      vim.keymap.set('n', '<leader>Sr', '<Cmd>lua MiniSessions.select("read")<CR>', { desc = '[S]ession [r]ead' })
+      vim.keymap.set('n', '<leader>Sw', '<Cmd>lua MiniSessions.write()<CR>', { desc = '[S]ession [w]rite' })
+
+      require('mini.misc').setup()
+      -- Change current working directory based on the current file path. It
+      -- searches up the file tree until the first root marker ('.git' or 'Makefile')
+      -- and sets their parent directory as a current directory.
+      -- This is helpful when simultaneously dealing with files from several projects.
+      MiniMisc.setup_auto_root()
+
+      -- Restore latest cursor position on file open
+      MiniMisc.setup_restore_cursor()
+
+      -- Synchronize terminal emulator background with Neovim's background to remove
+      -- possibly different color padding around Neovim instance
+      MiniMisc.setup_termbg_sync()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
