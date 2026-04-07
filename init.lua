@@ -1,5 +1,5 @@
 -- Use new UI of nvim added va neovim 0.12
--- run command w/ :!pwd and use g<
+-- run command w/ :!pwd and use g< ; use :q or ZZ to close it
 require('vim._core.ui2').enable {}
 
 vim.opt.tabstop = 4 -- Display width of a tab character
@@ -99,6 +99,9 @@ vim.keymap.set('x', '<leader>p', [["_dP]])
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+vim.keymap.set('n', 'gh', function()
+  vim.lsp.buf.hover { border = 'single', max_height = 25, max_width = 120 }
+end, { desc = 'Show signature help' })
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
