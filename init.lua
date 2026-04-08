@@ -153,6 +153,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Disable GitHub copilot auto suggestions by default
 vim.g.copilot_enabled = false
+vim.g.copilot_version = false
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -847,21 +848,42 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   {
-    'olimorris/codecompanion.nvim',
+    'CopilotC-Nvim/CopilotChat.nvim',
     dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'github/copilot.vim',
+      { 'nvim-lua/plenary.nvim', branch = 'master' },
     },
+    build = 'make',
     opts = {
-      -- NOTE: The log_level is in `opts.opts`
-      opts = {
-        log_level = 'DEBUG', -- or "TRACE"
-      },
+      -- See Configuration section for options
     },
   },
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+  -- {
+  --   'olimorris/codecompanion.nvim',
+  --   dependencies = {
+  --     'nvim-lua/plenary.nvim',
+  --     'nvim-treesitter/nvim-treesitter',
+  --     'github/copilot.vim',
+  --   },
+  --   opts = {
+  --     opts = {
+  --       log_level = 'DEBUG',
+  --     },
+  --
+  --     adapters = {
+  --       http = {
+  --         opts = {
+  --           -- This maps to curl --insecure (skips cert verification)
+  --           allow_insecure = true,
+  --
+  --           -- If you ever do need a proxy:
+  --           -- proxy = "http://host:port",
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -920,7 +942,7 @@ require('lazy').setup({
 
       -- Synchronize terminal emulator background with Neovim's background to remove
       -- possibly different color padding around Neovim instance
-      MiniMisc.setup_termbg_sync()
+      -- disable on Windows MiniMisc.setup_termbg_sync()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -949,7 +971,7 @@ require('lazy').setup({
     -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1042,11 +1064,13 @@ require('guess-indent').setup {
 }
 
 -- Code Companion Shortcuts
-vim.keymap.set({ 'n', 'v' }, '<leader>sa', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
-
+-- vim.keymap.set({ 'n', 'v' }, '<leader>sa', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
+-- vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
 -- Expand 'cc' into 'CodeCompanion' in the command line
-vim.cmd [[cab cc CodeCompanion]]
+-- vim.cmd [[cab cc CodeCompanion]]
+
+-- As CodeCompanion has windows problems
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CopilotChatToggle<cr>', { noremap = true, silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
