@@ -874,6 +874,16 @@ require('lazy').setup({
   --     },
   --   },
   -- },
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    dependencies = {
+      { 'nvim-lua/plenary.nvim', branch = 'master' },
+    },
+    build = 'make',
+    opts = {
+      -- See Configuration section for options
+    },
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
