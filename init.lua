@@ -414,7 +414,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sp', function()
         require('telescope.builtin').find_files(require('telescope.themes').get_dropdown {
           prompt_title = 'Open Directory',
-          cwd = '~/documents/dev',
+          cwd = 'C:/dev',
           previewer = false,
           find_command = { 'fd', '--type', 'd', '--max-depth', '1' },
           attach_mappings = function(_, map)
@@ -423,7 +423,7 @@ require('lazy').setup({
             map('i', '<CR>', function(prompt_bufnr)
               local entry = action_state.get_selected_entry()
               actions.close(prompt_bufnr)
-              local new_dir = vim.fs.joinpath('/Users/daniel_eichinger/Documents/dev', entry[1])
+              local new_dir = vim.fs.joinpath('C:/dev', entry[1])
               vim.loop.chdir(new_dir)
               vim.cmd('cd ' .. vim.fn.fnameescape(new_dir))
               vim.cmd('Oil ' .. new_dir)
@@ -431,7 +431,7 @@ require('lazy').setup({
             return true
           end,
         })
-      end, { desc = '[S]earch [p]rojects from ~/documents/dev' })
+      end, { desc = '[S]earch [p]rojects from C:/dev' })
     end,
   },
 
@@ -899,6 +899,29 @@ require('lazy').setup({
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
+  {
+    'CopilotC-Nvim/CopilotChat.nvim',
+    dependencies = {
+      { 'nvim-lua/plenary.nvim', branch = 'master' },
+    },
+    build = 'make',
+    opts = {
+      window = {
+        layout = 'vertical',
+        title = '🤖',
+        zindex = 100,
+      },
+
+      headers = {
+        user = '🐍 Daniel',
+        assistant = '🤖 Copilot',
+        tool = '🔧 Tool',
+      },
+
+      separator = '━━',
+      auto_fold = true, -- Automatically folds non-assistant messages
+    },
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1078,14 +1101,15 @@ require('guess-indent').setup {
   default_tabstop = 2,
 }
 
--- Code Companion Shortcuts
--- vim.keymap.set({ 'n', 'v' }, '<leader>sa', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
--- vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
--- Expand 'cc' into 'CodeCompanion' in the command line
--- vim.cmd [[cab cc CodeCompanion]]
-
 -- As CodeCompanion has windows problems
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CopilotChatToggle<cr>', { noremap = true, silent = true })
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = 'copilot-*',
+  callback = function()
+    vim.opt_local.relativenumber = false
+    vim.opt_local.number = true
+  end,
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
