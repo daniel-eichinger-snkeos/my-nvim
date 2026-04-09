@@ -122,11 +122,11 @@ vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
--- vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
--- vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
-vim.keymap.set('n', '<C-j>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-k>', '<cmd>cprev<CR>zz')
+-- vim.keymap.set('n', '<C-j>', '<cmd>cnext<CR>zz')
+-- vim.keymap.set('n', '<C-k>', '<cmd>cprev<CR>zz')
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -409,6 +409,29 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- Shortcut for searching for dirs in dev folder
+      vim.keymap.set('n', '<leader>sp', function()
+        require('telescope.builtin').find_files(require('telescope.themes').get_dropdown {
+          prompt_title = 'Open Directory',
+          cwd = '~/documents/dev',
+          previewer = false,
+          find_command = { 'fd', '--type', 'd', '--max-depth', '1' },
+          attach_mappings = function(_, map)
+            local actions = require 'telescope.actions'
+            local action_state = require 'telescope.actions.state'
+            map('i', '<CR>', function(prompt_bufnr)
+              local entry = action_state.get_selected_entry()
+              actions.close(prompt_bufnr)
+              local new_dir = vim.fs.joinpath('/Users/daniel_eichinger/Documents/dev', entry[1])
+              vim.loop.chdir(new_dir)
+              vim.cmd('cd ' .. vim.fn.fnameescape(new_dir))
+              vim.cmd('Oil ' .. new_dir)
+            end)
+            return true
+          end,
+        })
+      end, { desc = '[S]earch [p]rojects from ~/documents/dev' })
     end,
   },
 
@@ -849,40 +872,32 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-  -- {
-  --   'olimorris/codecompanion.nvim',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim',
-  --     'nvim-treesitter/nvim-treesitter',
-  --     'github/copilot.vim',
-  --   },
-  --   opts = {
-  --     opts = {
-  --       log_level = 'DEBUG',
-  --     },
-  --
-  --     adapters = {
-  --       http = {
-  --         opts = {
-  --           -- This maps to curl --insecure (skips cert verification)
-  --           allow_insecure = true,
-  --
-  --           -- If you ever do need a proxy:
-  --           -- proxy = "http://host:port",
-  --         },
-  --       },
-  --     },
-  --   },
-  -- },
   {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = {
-      { 'nvim-lua/plenary.nvim', branch = 'master' },
+    -- allows pretty nice things like :GoTest and :GoLint
+    'ray-x/go.nvim',
+    dependencies = { -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
     },
-    build = 'make',
-    opts = {
-      -- See Configuration section for options
-    },
+    opts = function()
+      require('go').setup(opts)
+      local format_sync_grp = vim.api.nvim_create_augroup('GoFormat', {})
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.go',
+        callback = function()
+          require('go.format').goimports()
+        end,
+        group = format_sync_grp,
+      })
+      return {
+        -- lsp_keymaps = false,
+        -- other options
+      }
+    end,
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
