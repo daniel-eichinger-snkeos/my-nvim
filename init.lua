@@ -848,16 +848,6 @@ require('lazy').setup({
   },
 
   -- Highlight todo, notes, etc in comments
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    dependencies = {
-      { 'nvim-lua/plenary.nvim', branch = 'master' },
-    },
-    build = 'make',
-    opts = {
-      -- See Configuration section for options
-    },
-  },
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   -- {
   --   'olimorris/codecompanion.nvim',
