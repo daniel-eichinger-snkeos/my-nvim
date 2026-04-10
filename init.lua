@@ -916,13 +916,12 @@ require('lazy').setup({
     'echasnovski/mini.nvim',
     config = function()
       require('mini.pairs').setup()
-      require('mini.comment').setup()
 
       require('mini.move').setup {
         mappings = {
           -- Move visual selection in Visual mode.
-          left = '',
-          right = '',
+          left = 'H',
+          right = 'L',
           down = 'J',
           up = 'K',
         },
