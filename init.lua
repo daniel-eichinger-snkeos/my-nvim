@@ -872,7 +872,7 @@ require('lazy').setup({
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   {
-    -- allows pretty nice things like :GoTest and :GoLint
+    --   -- allows pretty nice things like :GoTest and :GoLint
     'ray-x/go.nvim',
     dependencies = { -- optional packages
       'ray-x/guihua.lua',
@@ -996,7 +996,7 @@ require('lazy').setup({
     -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'go', 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1097,3 +1097,11 @@ vim.cmd [[cab cc CodeCompanion]]
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+-- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'go' },
+  callback = function()
+    vim.treesitter.start()
+  end,
+})
