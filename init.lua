@@ -2,6 +2,9 @@
 -- run command w/ :!pwd and use g< ; use :q or ZZ to close it
 require('vim._core.ui2').enable {}
 
+vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
+vim.opt.shellcmdflag = '-c'
+
 vim.opt.tabstop = 4 -- Display width of a tab character
 
 -- Set <space> as the leader key
