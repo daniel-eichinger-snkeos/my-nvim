@@ -926,6 +926,9 @@ require('lazy').setup({
       -- Starting page for nvim
       require('mini.starter').setup()
 
+      -- clickable tabs (create w/ :tabnew); switch tabs with [b
+      require('mini.tabline').setup()
+
       -- S is for 'Session'. Common usage:
       -- - `<Leader>Sn` - start new session
       -- - `<Leader>Sr` - read previously started session
