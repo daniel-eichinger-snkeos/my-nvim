@@ -898,20 +898,6 @@ require('lazy').setup({
     ft = { 'go', 'gomod' },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
-  {
-    'olimorris/codecompanion.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'github/copilot.vim',
-    },
-    opts = {
-      -- NOTE: The log_level is in `opts.opts`
-      opts = {
-        log_level = 'DEBUG', -- or "TRACE"
-      },
-    },
-  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
