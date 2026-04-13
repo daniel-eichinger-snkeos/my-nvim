@@ -4,6 +4,8 @@ require('vim._core.ui2').enable {}
 
 vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
 vim.opt.shellcmdflag = '-c'
+vim.opt.shellquote = ''
+vim.opt.shellxquote = ''
 
 vim.opt.tabstop = 4 -- Display width of a tab character
 
@@ -934,8 +936,8 @@ require('lazy').setup({
       require('mini.move').setup {
         mappings = {
           -- Move visual selection in Visual mode.
-          left = '',
-          right = '',
+          left = 'H',
+          right = 'L',
           down = 'J',
           up = 'K',
         },
@@ -956,7 +958,6 @@ require('lazy').setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup()
       require('mini.comment').setup()
-
       -- Starting page for nvim
       require('mini.starter').setup()
 
