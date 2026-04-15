@@ -2,6 +2,7 @@
 -- run command w/ :!pwd and use g< ; use :q or ZZ to close it
 require('vim._core.ui2').enable {}
 
+vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
 vim.opt.shellcmdflag = '-c'
 vim.opt.shellquote = ''
@@ -1091,7 +1092,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go' },
+  pattern = { 'go', 'terraform', 'gomod' },
   callback = function()
     vim.treesitter.start()
   end,
