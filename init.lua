@@ -7,6 +7,7 @@ require('vim._core.ui2').enable {}
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.tabstop = 4 -- Display width of a tab character
 vim.o.breakindent = true -- Enable break indent
 
@@ -88,6 +89,8 @@ vim.o.confirm = true
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.keymap.set('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save current buffer' })
 
 -- Remap <leader>p to paste over currently selected text without yanking it
 vim.keymap.set('x', '<leader>p', [["_dP]])
@@ -868,33 +871,6 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-  {
-    --   -- allows pretty nice things like :GoTest and :GoLint
-    'ray-x/go.nvim',
-    dependencies = { -- optional packages
-      'ray-x/guihua.lua',
-      'neovim/nvim-lspconfig',
-      'nvim-treesitter/nvim-treesitter',
-    },
-    opts = function()
-      require('go').setup(opts)
-      local format_sync_grp = vim.api.nvim_create_augroup('GoFormat', {})
-      vim.api.nvim_create_autocmd('BufWritePre', {
-        pattern = '*.go',
-        callback = function()
-          require('go.format').goimports()
-        end,
-        group = format_sync_grp,
-      })
-      return {
-        -- lsp_keymaps = false,
-        -- other options
-      }
-    end,
-    event = { 'CmdlineEnter' },
-    ft = { 'go', 'gomod' },
-    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
-  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1086,7 +1062,7 @@ vim.cmd [[cab cc CodeCompanion]]
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go' },
+  pattern = { 'go', 'gomod' },
   callback = function()
     vim.treesitter.start()
   end,
