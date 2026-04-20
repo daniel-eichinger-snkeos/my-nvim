@@ -8,6 +8,7 @@ vim.opt.shellcmdflag = '-c'
 vim.opt.shellquote = ''
 vim.opt.shellxquote = ''
 
+vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.tabstop = 4 -- Display width of a tab character
 vim.o.breakindent = true -- Enable break indent
 
@@ -89,6 +90,8 @@ vim.o.confirm = true
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.keymap.set('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save current buffer' })
 
 -- Remap <leader>p to paste over currently selected text without yanking it
 vim.keymap.set('x', '<leader>p', [["_dP]])
@@ -815,6 +818,7 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'super-tab',
+        ['<CR>'] = { 'accept', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -829,7 +833,7 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true },
       },
 
       sources = {
@@ -872,33 +876,6 @@ require('lazy').setup({
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-  -- {
-  --   --   -- allows pretty nice things like :GoTest and :GoLint
-  --   'ray-x/go.nvim',
-  --   dependencies = { -- optional packages
-  --     'ray-x/guihua.lua',
-  --     'neovim/nvim-lspconfig',
-  --     'nvim-treesitter/nvim-treesitter',
-  --   },
-  --   opts = function()
-  --     require('go').setup(opts)
-  --     local format_sync_grp = vim.api.nvim_create_augroup('GoFormat', {})
-  --     vim.api.nvim_create_autocmd('BufWritePre', {
-  --       pattern = '*.go',
-  --       callback = function()
-  --         require('go.format').goimports()
-  --       end,
-  --       group = format_sync_grp,
-  --     })
-  --     return {
-  --       -- lsp_keymaps = false,
-  --       -- other options
-  --     }
-  --   end,
-  --   event = { 'CmdlineEnter' },
-  --   ft = { 'go', 'gomod' },
-  --   build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
-  -- },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
