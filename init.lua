@@ -1074,3 +1074,18 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.treesitter.start()
   end,
 })
+
+-- open help in vertical split
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'help',
+  command = 'wincmd L',
+})
+
+-- syntax highlighting for *.hcl.tpl files
+vim.api.nvim_create_autocmd('BufRead', {
+  group = vim.api.nvim_create_augroup('hcl_tpl_ft', { clear = true }),
+  pattern = '*.hcl.tpl',
+  callback = function()
+    vim.bo.filetype = 'hcl'
+  end,
+})
