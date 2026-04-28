@@ -53,7 +53,7 @@ vim.o.signcolumn = 'yes'
 vim.o.updatetime = 250
 
 -- Decrease mapped sequence wait time
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 600
 
 -- Configure how new splits should be opened
 vim.o.splitright = true
@@ -141,6 +141,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 
 -- Keybinds to use Oil file explorer
 vim.keymap.set('n', '-', '<cmd>Oil<CR>')
+
+vim.keymap.set({ 'n', 't' }, '<leader>q', ':bd<cr>', { silent = true, noremap = true, desc = 'Quit current buffer' })
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode

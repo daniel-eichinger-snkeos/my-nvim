@@ -14,7 +14,7 @@ return {
   },
   config = function()
     local neotest_golang_opts = { -- Specify configuration
-      runner = 'go',
+      runner = 'gotestsum',
       go_test_args = {
         '-v',
         '-count=1',
@@ -24,6 +24,9 @@ return {
     require('neotest').setup {
       adapters = {
         require 'neotest-golang'(neotest_golang_opts),
+      },
+      output_panel = {
+        open = 'vsplit', -- open vertically and move to the far left
       },
     }
 
