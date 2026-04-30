@@ -902,8 +902,6 @@ require('lazy').setup({
       require('mini.ai').setup { n_lines = 500 }
 
       require('mini.comment').setup()
-      -- Starting page for nvim
-      require('mini.starter').setup()
 
       -- clickable tabs (create w/ :tabnew); switch tabs with [b
       require('mini.tabline').setup()
