@@ -24,6 +24,9 @@ return {
     require('neotest').setup {
       adapters = {
         require 'neotest-golang'(neotest_golang_opts),
+        output_panel = {
+          open = 'vsplit', -- open vertically and move to the far left
+        },
       },
     }
 
@@ -36,7 +39,7 @@ return {
     vim.keymap.set('n', '<leader>to', ':Neotest output<cr>', { silent = true, desc = '[T]est [o]utput' })
     vim.keymap.set('n', '<leader>tp', ':Neotest output-panel<cr>', { silent = true, desc = '[T]est output [p]anel' })
 
-    vim.keymap.set('n', '<leader>cv', '<cmd>CoverageToggle<cr>', { silent = true, desc = '[C]overage toggle' })
-    vim.keymap.set('n', '<leader>cs', '<cmd>Coverage<cr><cmd>CoverageSummary<cr>', { silent = true, desc = '[C]overage [S]ummary' })
+    vim.keymap.set('n', '<leader>ct', '<cmd>CoverageToggle<cr>', { silent = true, desc = '[C]overage [t]oggle' })
+    vim.keymap.set('n', '<leader>cs', '<cmd>Coverage<cr><cmd>CoverageSummary<cr>', { silent = true, desc = '[C]overage [s]ummary' })
   end,
 }

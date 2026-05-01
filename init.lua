@@ -139,6 +139,8 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Keybinds to use Oil file explorer
 vim.keymap.set('n', '-', '<cmd>Oil<CR>')
 
+vim.keymap.set({ 'n', 't' }, '<leader>q', ':bd<cr>', { silent = true, noremap = true, desc = 'Quit current buffer' })
+
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
 --  See `:help vim.hl.on_yank()`
