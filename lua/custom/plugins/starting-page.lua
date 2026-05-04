@@ -4,6 +4,7 @@ return {
   opts = {
     dashboard = {
       preset = {
+        header_hl = 'SnacksDashboardHeader',
         pick = function(cmd, opts)
           return LazyVim.pick(cmd, opts)()
         end,

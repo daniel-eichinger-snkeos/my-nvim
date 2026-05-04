@@ -1,23 +1,27 @@
 return {
-  'CopilotC-Nvim/CopilotChat.nvim',
+  'olimorris/codecompanion.nvim',
   dependencies = {
-    { 'nvim-lua/plenary.nvim', branch = 'master' }
+    'nvim-lua/plenary.nvim',
+    'nvim-treesitter/nvim-treesitter',
+    'github/copilot.vim',
+    'cairijun/codecompanion-agentskills.nvim',
   },
-  build = 'make',
   opts = {
-    window = {
-      layout = 'vertical',
-      title = '🤖',
-      zindex = 100,
+    opts = {
+      log_level = 'DEBUG',
     },
-
-    headers = {
-      user = '🐍 Daniel',
-      assistant = '🤖 Copilot',
-      tool = '🔧 Tool',
-    },
-
-    separator = '━━',
-    auto_fold = true, -- Automatically folds non-assistant messages
   },
+  config = function()
+    require('codecompanion').setup {
+      extensions = {
+        agentskills = {
+          opts = {
+            paths = {
+              { '~/.config/ai/.agents/skills', recursive = true },
+            },
+          },
+        },
+      },
+    }
+  end,
 }

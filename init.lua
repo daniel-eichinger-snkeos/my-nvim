@@ -875,7 +875,6 @@ require('lazy').setup({
       vim.cmd.colorscheme 'dracula-soft'
     end,
   },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Collection of various small independent plugins/modules
@@ -1055,7 +1054,7 @@ require('guess-indent').setup {
 }
 
 -- As CodeCompanion has windows problems
-vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CopilotChatToggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = 'copilot-*',
   callback = function()
@@ -1069,7 +1068,7 @@ vim.api.nvim_create_autocmd('BufEnter', {
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go', 'terraform', 'gomod' },
+  pattern = { 'go', 'terraform', 'gomod', 'lua' },
   callback = function()
     vim.treesitter.start()
   end,
@@ -1089,3 +1088,5 @@ vim.api.nvim_create_autocmd('BufRead', {
     vim.bo.filetype = 'hcl'
   end,
 })
+
+vim.api.nvim_set_hl(0, 'SnacksDashboardHeader', { fg = '#71e802', bold = true })
