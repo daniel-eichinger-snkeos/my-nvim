@@ -655,7 +655,15 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {},
-        powershell_es = {},
+        powershell_es = {
+          settings = {
+            powershell = {
+              codeFormatting = {
+                OpenBraceOnSameLine = true,
+              },
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -734,24 +742,37 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, hcl = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 3000,
             lsp_format = 'fallback',
           }
         end
       end,
+      formatters = {
+        powershell_es = {
+          command = 'pwsh',
+          args = {
+            '-NoProfile',
+            '-Command',
+            '[Console]::In.ReadToEnd() | Invoke-Formatter | Out-String | %{ ($_.TrimEnd("`r", "`n")) + "`n" }',
+          },
+          stdin = true,
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
-        ps1 = { 'psscriptanalyzer' },
+        hcl = { 'hcl' },
+        ps1 = { 'powershell_es' },
+        -- ps1 = { 'psscriptanalyzer' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -860,19 +881,27 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'Mofiqul/dracula.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  -- {
+  --   'Mofiqul/dracula.nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     -- vim.cmd.colorscheme 'dracula-soft'
+  --   end,
+  -- },
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 1000,
+    colors = {
+      theme = {
+        all = {
+          ui = {
+            bg_gutter = 'none',
+          },
+        },
+      },
+    },
     config = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'dracula-soft'
+      vim.cmd.colorscheme 'kanagawa'
     end,
   },
   -- Highlight todo, notes, etc in comments
@@ -992,7 +1021,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
-  require 'kickstart.plugins.lazygit',
+  -- require 'kickstart.plugins.lazygit',
   require 'kickstart.plugins.smear_cursor',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
@@ -1063,6 +1092,14 @@ vim.api.nvim_create_autocmd('BufEnter', {
   end,
 })
 
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
 
@@ -1089,4 +1126,4 @@ vim.api.nvim_create_autocmd('BufRead', {
   end,
 })
 
-vim.api.nvim_set_hl(0, 'SnacksDashboardHeader', { fg = '#71e802', bold = true })
+-- vim.api.nvim_set_hl(0, 'SnacksDashboardHeader', { fg = '#71e802', bold = true })
