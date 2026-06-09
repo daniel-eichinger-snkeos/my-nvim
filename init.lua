@@ -1095,7 +1095,9 @@ require('guess-indent').setup {
 }
 
 -- As CodeCompanion has windows problems
-vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true, desc = '[A]I [C]hat' })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ai', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true, desc = '[A]I [I]line' })
+
 vim.api.nvim_create_autocmd('BufEnter', {
   pattern = 'copilot-*',
   callback = function()
@@ -1117,7 +1119,7 @@ vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go', 'terraform', 'gomod', 'lua' },
+  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp' },
   callback = function()
     vim.treesitter.start()
   end,
@@ -1139,3 +1141,74 @@ vim.api.nvim_create_autocmd('BufRead', {
 })
 
 -- vim.api.nvim_set_hl(0, 'SnacksDashboardHeader', { fg = '#71e802', bold = true })
+
+vim.lsp.enable 'roslyn_ls'
+
+-- Code Companion spinner based on https://github.com/olimorris/dotfiles/blob/main/.config/nvim/plugin/ai.lua
+
+local spinner = {
+  completed = '󰗡 Completed',
+  error = ' Error',
+  cancelled = '󰜺 Cancelled',
+}
+
+---Format the adapter name and model for display with the spinner
+---@param adapter CodeCompanion.Adapter
+---@return string
+local function format_adapter(adapter)
+  local parts = {}
+  table.insert(parts, adapter.formatted_name)
+  if adapter.model and adapter.model ~= '' then
+    table.insert(parts, '(' .. adapter.model .. ')')
+  end
+  return table.concat(parts, ' ')
+end
+
+---Setup the spinner for CodeCompanion
+---@return nil
+local function codecompanion_spinner()
+  local ok, progress = pcall(require, 'fidget.progress')
+  if not ok then
+    return
+  end
+
+  spinner.handles = {}
+
+  local group = vim.api.nvim_create_augroup('dotfiles.codecompanion.spinner', {})
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'CodeCompanionRequestStarted',
+    group = group,
+    callback = function(args)
+      local handle = progress.handle.create {
+        title = '',
+        message = '  Sending...',
+        lsp_client = {
+          name = format_adapter(args.data.adapter),
+        },
+      }
+      spinner.handles[args.data.id] = handle
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'CodeCompanionRequestFinished',
+    group = group,
+    callback = function(args)
+      local handle = spinner.handles[args.data.id]
+      spinner.handles[args.data.id] = nil
+      if handle then
+        if args.data.status == 'success' then
+          handle.message = spinner.completed
+        elseif args.data.status == 'error' then
+          handle.message = spinner.error
+        else
+          handle.message = spinner.cancelled
+        end
+        handle:finish()
+      end
+    end,
+  })
+end
+
+codecompanion_spinner()
