@@ -378,7 +378,19 @@ require('lazy').setup({
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      vim.keymap.set('n', '<leader>sg', function()
+        require('telescope.builtin').live_grep {
+          additional_args = function()
+            return {
+              '--hidden',
+              '--glob',
+              '!.git/*',
+              '--glob',
+              '!node_modules/*',
+            }
+          end,
+        }
+      end, { desc = '[S]earch by [G]rep (hidden, no .git/node_modules)' })
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
@@ -856,22 +868,22 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'Mofiqul/dracula.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+  {
+    'rebelot/kanagawa.nvim',
+    priority = 1000,
+    colors = {
+      theme = {
+        all = {
+          ui = {
+            bg_gutter = 'none',
+          },
+        },
+      },
+    },
     config = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'dracula-soft'
+      vim.cmd.colorscheme 'kanagawa'
     end,
   },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Collection of various small independent plugins/modules
@@ -898,9 +910,6 @@ require('lazy').setup({
       require('mini.ai').setup { n_lines = 500 }
 
       require('mini.comment').setup()
-
-      -- Starting page for nvim
-      require('mini.starter').setup()
 
       -- clickable tabs (create w/ :tabnew); switch tabs with [b
       require('mini.tabline').setup()
@@ -1054,11 +1063,28 @@ require('guess-indent').setup {
 }
 
 -- Code Companion Shortcuts
-vim.keymap.set({ 'n', 'v' }, '<leader>sa', '<cmd>CodeCompanionActions<cr>', { noremap = true, silent = true })
-vim.keymap.set({ 'n', 'v' }, '<LocalLeader>a', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true, desc = '[A]I [C]hat' })
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ai', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true, desc = '[A]I [I]line' })
+
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = 'copilot-*',
+  callback = function()
+    vim.opt_local.relativenumber = false
+    vim.opt_local.number = true
+  end,
+})
 
 -- Expand 'cc' into 'CodeCompanion' in the command line
 vim.cmd [[cab cc CodeCompanion]]
+
+-- Toggle Term on Linux and Mac use CTRL + Z and fg
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
