@@ -2,6 +2,9 @@
 -- run command w/ :!pwd and use g< ; use :q or ZZ to close it
 require('vim._core.ui2').enable {}
 
+-- Enable faster startup by caching compiled Lua modules
+vim.loader.enable()
+
 vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
 vim.opt.shellcmdflag = '-c'
