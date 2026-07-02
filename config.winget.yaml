@@ -47,10 +47,6 @@ properties:
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       settings:
-        id: GoLang.Go
-        source: winget
-    - resource: Microsoft.WinGet.DSC/WinGetPackage
-      settings:
         id: FiloSottile.mkcert
         source: winget
     - resource: Microsoft.WinGet.DSC/WinGetPackage
@@ -68,6 +64,21 @@ properties:
     - resource: Microsoft.WinGet.DSC/WinGetPackage
       settings:
         id: junegunn.fzf
+        source: winget
+
+    # SDKs
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      settings:
+        id: Microsoft.DotNet.SDK.10
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      settings:
+        id: GoLang.Go
+        source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      settings:
+        id: OpenJS.NodeJS
+        version: 24.10.0
         source: winget
 
     # AI tools
