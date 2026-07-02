@@ -173,12 +173,17 @@ return {
       'nvim-lua/plenary.nvim',
       'antoinemadec/FixCursorHold.nvim',
       'nvim-treesitter/nvim-treesitter',
+      -- Golang
       {
         'fredrikaverpil/neotest-golang',
         dependencies = {
           'andythigpen/nvim-coverage',
           'leoluz/nvim-dap-go',
         },
+      },
+      -- .NET
+      {
+        'citizenharris/neotest-dotnet',
       },
     },
     config = function()
@@ -190,9 +195,13 @@ return {
           '-coverprofile=' .. vim.fn.getcwd() .. '/coverage.out',
         },
       }
+
       require('neotest').setup {
         adapters = {
           require 'neotest-golang'(neotest_golang_opts),
+          require 'neotest-dotnet' {
+            discovery_root = 'solution',
+          },
         },
         output_panel = {
           open = 'vsplit', -- open vertically and move to the far left

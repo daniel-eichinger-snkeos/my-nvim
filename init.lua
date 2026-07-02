@@ -1122,7 +1122,7 @@ vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp' },
+  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp', 'http' },
   callback = function()
     vim.treesitter.start()
   end,
