@@ -1002,6 +1002,9 @@ require('lazy').setup({
     branch = 'main',
     build = ':TSUpdate',
     lazy = false,
+    init = function()
+      vim.env.CC = 'gcc'
+    end,
     -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {

@@ -65,6 +65,10 @@ properties:
       settings:
         id: junegunn.fzf
         source: winget
+    - resource: Microsoft.WinGet.DSC/WinGetPackage
+      settings:
+        id: BurntSushi.ripgrep.MSVC
+        source: winget
 
     # SDKs
     - resource: Microsoft.WinGet.DSC/WinGetPackage
