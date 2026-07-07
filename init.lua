@@ -2,10 +2,16 @@
 -- run command w/ :!pwd and use g< ; use :q or ZZ to close it
 require('vim._core.ui2').enable {}
 
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
+-- Enable faster startup by caching compiled Lua modules
+vim.loader.enable()
+
+vim.o.wrap = false -- prevent lines from wrapping
+if vim.fn.has 'win32' == 1 then
+  vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
+  vim.opt.shellcmdflag = '-c'
+  vim.opt.shellquote = ''
+  vim.opt.shellxquote = ''
+end
 
 vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.tabstop = 4 -- Display width of a tab character
@@ -109,6 +115,8 @@ end, { desc = 'Show signature help' })
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+vim.keymap.set('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save current buffer' })
+
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -154,6 +162,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 
 -- Disable GitHub copilot auto suggestions by default
 vim.g.copilot_enabled = false
+vim.g.copilot_version = false
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -347,6 +356,7 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
           mappings = {
             i = {
               ['<C-j>'] = 'move_selection_next',
@@ -373,7 +383,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', function()
         require('telescope.builtin').find_files {
           hidden = true,
-          find_command = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git' },
+          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
         }
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -427,7 +437,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sp', function()
         require('telescope.builtin').find_files(require('telescope.themes').get_dropdown {
           prompt_title = 'Open Directory',
-          cwd = '~/documents/dev',
+          cwd = 'C:/dev',
           previewer = false,
           find_command = { 'fd', '--type', 'd', '--max-depth', '1' },
           attach_mappings = function(_, map)
@@ -436,7 +446,7 @@ require('lazy').setup({
             map('i', '<CR>', function(prompt_bufnr)
               local entry = action_state.get_selected_entry()
               actions.close(prompt_bufnr)
-              local new_dir = vim.fs.joinpath('/Users/daniel_eichinger/Documents/dev', entry[1])
+              local new_dir = vim.fs.joinpath('C:/dev', entry[1])
               vim.loop.chdir(new_dir)
               vim.cmd('cd ' .. vim.fn.fnameescape(new_dir))
               vim.cmd('Oil ' .. new_dir)
@@ -444,7 +454,7 @@ require('lazy').setup({
             return true
           end,
         })
-      end, { desc = '[S]earch [p]rojects from ~/documents/dev' })
+      end, { desc = '[S]earch [p]rojects from C:/dev' })
     end,
   },
 
@@ -455,6 +465,9 @@ require('lazy').setup({
     'folke/lazydev.nvim',
     ft = 'lua',
     opts = {
+      install = {
+        missing = true,
+      },
       library = {
         -- Load luvit types when the `vim.uv` word is found
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
@@ -663,7 +676,15 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {},
-        powershell_es = {},
+        powershell_es = {
+          settings = {
+            powershell = {
+              codeFormatting = {
+                OpenBraceOnSameLine = true,
+              },
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -742,24 +763,37 @@ require('lazy').setup({
       },
     },
     opts = {
-      notify_on_error = false,
+      notify_on_error = true,
       format_on_save = function(bufnr)
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, hcl = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 3000,
             lsp_format = 'fallback',
           }
         end
       end,
+      formatters = {
+        powershell_es = {
+          command = 'pwsh',
+          args = {
+            '-NoProfile',
+            '-Command',
+            '[Console]::In.ReadToEnd() | Invoke-Formatter | Out-String | %{ ($_.TrimEnd("`r", "`n")) + "`r`n" }',
+          },
+          stdin = true,
+        },
+      },
       formatters_by_ft = {
         lua = { 'stylua' },
-        ps1 = { 'psscriptanalyzer' },
+        hcl = { 'hcl' },
+        ps1 = { 'powershell_es' },
+        -- ps1 = { 'psscriptanalyzer' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -868,6 +902,13 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
+  -- {
+  --   'Mofiqul/dracula.nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     -- vim.cmd.colorscheme 'dracula-soft'
+  --   end,
+  -- },
   {
     'rebelot/kanagawa.nvim',
     priority = 1000,
@@ -937,7 +978,7 @@ require('lazy').setup({
 
       -- Synchronize terminal emulator background with Neovim's background to remove
       -- possibly different color padding around Neovim instance
-      MiniMisc.setup_termbg_sync()
+      -- disable on Windows MiniMisc.setup_termbg_sync()
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -967,6 +1008,9 @@ require('lazy').setup({
     branch = 'main',
     build = ':TSUpdate',
     lazy = false,
+    init = function()
+      vim.env.CC = 'gcc'
+    end,
     -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
@@ -1001,7 +1045,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
-  require 'kickstart.plugins.lazygit',
+  -- require 'kickstart.plugins.lazygit',
   require 'kickstart.plugins.smear_cursor',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
@@ -1062,7 +1106,6 @@ require('guess-indent').setup {
   default_tabstop = 2,
 }
 
--- Code Companion Shortcuts
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true, desc = '[A]I [C]hat' })
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ai', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true, desc = '[A]I [I]line' })
 
@@ -1074,8 +1117,13 @@ vim.api.nvim_create_autocmd('BufEnter', {
   end,
 })
 
--- Expand 'cc' into 'CodeCompanion' in the command line
-vim.cmd [[cab cc CodeCompanion]]
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- Toggle Term on Linux and Mac use CTRL + Z and fg
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
@@ -1091,7 +1139,7 @@ vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
 
 -- enable highlighting https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#highlighting, https://github.com/nvim-treesitter/nvim-treesitter/issues/8053
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go', 'gomod' },
+  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp', 'http' },
   callback = function()
     vim.treesitter.start()
   end,
@@ -1102,3 +1150,85 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'help',
   command = 'wincmd L',
 })
+
+-- syntax highlighting for *.hcl.tpl files
+vim.api.nvim_create_autocmd('BufRead', {
+  group = vim.api.nvim_create_augroup('hcl_tpl_ft', { clear = true }),
+  pattern = '*.hcl.tpl',
+  callback = function()
+    vim.bo.filetype = 'hcl'
+  end,
+})
+
+-- vim.api.nvim_set_hl(0, 'SnacksDashboardHeader', { fg = '#71e802', bold = true })
+
+vim.lsp.enable 'roslyn_ls'
+
+-- Code Companion spinner based on https://github.com/olimorris/dotfiles/blob/main/.config/nvim/plugin/ai.lua
+
+local spinner = {
+  completed = '󰗡 Completed',
+  error = ' Error',
+  cancelled = '󰜺 Cancelled',
+}
+
+---Format the adapter name and model for display with the spinner
+---@param adapter CodeCompanion.Adapter
+---@return string
+local function format_adapter(adapter)
+  local parts = {}
+  table.insert(parts, adapter.formatted_name)
+  if adapter.model and adapter.model ~= '' then
+    table.insert(parts, '(' .. adapter.model .. ')')
+  end
+  return table.concat(parts, ' ')
+end
+
+---Setup the spinner for CodeCompanion
+---@return nil
+local function codecompanion_spinner()
+  local ok, progress = pcall(require, 'fidget.progress')
+  if not ok then
+    return
+  end
+
+  spinner.handles = {}
+
+  local group = vim.api.nvim_create_augroup('dotfiles.codecompanion.spinner', {})
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'CodeCompanionRequestStarted',
+    group = group,
+    callback = function(args)
+      local handle = progress.handle.create {
+        title = '',
+        message = '  Sending...',
+        lsp_client = {
+          name = format_adapter(args.data.adapter),
+        },
+      }
+      spinner.handles[args.data.id] = handle
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'CodeCompanionRequestFinished',
+    group = group,
+    callback = function(args)
+      local handle = spinner.handles[args.data.id]
+      spinner.handles[args.data.id] = nil
+      if handle then
+        if args.data.status == 'success' then
+          handle.message = spinner.completed
+        elseif args.data.status == 'error' then
+          handle.message = spinner.error
+        else
+          handle.message = spinner.cancelled
+        end
+        handle:finish()
+      end
+    end,
+  })
+end
+
+codecompanion_spinner()

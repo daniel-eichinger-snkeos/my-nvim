@@ -13,11 +13,19 @@ return {
   },
   config = function()
     require('codecompanion').setup {
+      interactions = {
+        chat = {
+          adapter = {
+            name = 'copilot',
+            model = 'gpt-5.4-mini',
+          },
+        },
+      },
       extensions = {
         agentskills = {
           opts = {
             paths = {
-              { '~/.config/nvim/skills/.agents/skills', recursive = true }, -- Recursive search
+              { '~/.agents/skills', recursive = true },
             },
           },
         },
