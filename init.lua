@@ -6,10 +6,12 @@ require('vim._core.ui2').enable {}
 vim.loader.enable()
 
 vim.o.wrap = false -- prevent lines from wrapping
-vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
-vim.opt.shellcmdflag = '-c'
-vim.opt.shellquote = ''
-vim.opt.shellxquote = ''
+if vim.fn.has 'win32' == 1 then
+  vim.opt.shell = '"C:/Program Files/Git/bin/bash.exe"'
+  vim.opt.shellcmdflag = '-c'
+  vim.opt.shellquote = ''
+  vim.opt.shellxquote = ''
+end
 
 vim.o.wrap = false -- prevent lines from wrapping
 vim.opt.tabstop = 4 -- Display width of a tab character
@@ -354,6 +356,7 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
           mappings = {
             i = {
               ['<C-j>'] = 'move_selection_next',
@@ -380,7 +383,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', function()
         require('telescope.builtin').find_files {
           hidden = true,
-          find_command = { 'fd', '--type', 'f', '--hidden', '--exclude', '.git' },
+          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
         }
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -462,6 +465,9 @@ require('lazy').setup({
     'folke/lazydev.nvim',
     ft = 'lua',
     opts = {
+      install = {
+        missing = true,
+      },
       library = {
         -- Load luvit types when the `vim.uv` word is found
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
