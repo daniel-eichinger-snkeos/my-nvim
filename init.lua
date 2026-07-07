@@ -1106,7 +1106,6 @@ require('guess-indent').setup {
   default_tabstop = 2,
 }
 
--- As CodeCompanion has windows problems
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ac', '<cmd>CodeCompanionChat Toggle<cr>', { noremap = true, silent = true, desc = '[A]I [C]hat' })
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>ai', '<cmd>CodeCompanion<cr>', { noremap = true, silent = true, desc = '[A]I [I]line' })
 
@@ -1118,6 +1117,15 @@ vim.api.nvim_create_autocmd('BufEnter', {
   end,
 })
 
+vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
+function _G.set_terminal_keymaps()
+  local opts = { buffer = 0 }
+  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+end
+vim.cmd 'autocmd! TermOpen term://* lua set_terminal_keymaps()'
+
+-- Toggle Term on Linux and Mac use CTRL + Z and fg
 vim.keymap.set({ 'n', 'v' }, '<LocalLeader>tt', '<cmd>ToggleTerm<cr>', { noremap = true, silent = true })
 function _G.set_terminal_keymaps()
   local opts = { buffer = 0 }
