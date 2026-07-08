@@ -435,9 +435,11 @@ require('lazy').setup({
 
       -- Shortcut for searching for dirs in dev folder
       vim.keymap.set('n', '<leader>sp', function()
+        local project_root = vim.fn.has 'win32' == 1 and 'C:/dev' or '/home/daniel/dev2'
+
         require('telescope.builtin').find_files(require('telescope.themes').get_dropdown {
           prompt_title = 'Open Directory',
-          cwd = 'C:/dev',
+          cwd = project_root,
           previewer = false,
           find_command = { 'fd', '--type', 'd', '--max-depth', '1' },
           attach_mappings = function(_, map)
@@ -446,7 +448,7 @@ require('lazy').setup({
             map('i', '<CR>', function(prompt_bufnr)
               local entry = action_state.get_selected_entry()
               actions.close(prompt_bufnr)
-              local new_dir = vim.fs.joinpath('C:/dev', entry[1])
+              local new_dir = vim.fs.joinpath(project_root, entry[1])
               vim.loop.chdir(new_dir)
               vim.cmd('cd ' .. vim.fn.fnameescape(new_dir))
               vim.cmd('Oil ' .. new_dir)
