@@ -1234,3 +1234,7 @@ local function codecompanion_spinner()
 end
 
 codecompanion_spinner()
+
+vim.keymap.set('n', '<leader>j', function()
+  vim.cmd "%!jq '.'"
+end, { desc = 'Format buffer with jq' })

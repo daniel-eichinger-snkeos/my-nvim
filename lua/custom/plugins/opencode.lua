@@ -31,13 +31,6 @@ return {
 
     vim.o.autoread = true
 
-    vim.keymap.set({ 'n', 'x' }, '<leader>oa', function()
-      require('opencode').ask '@this: '
-    end, { desc = '[o]pencode [a]sk' })
-    vim.keymap.set({ 'n', 'x' }, '<leader>os', function()
-      require('opencode').select()
-    end, { desc = '[o]pencode [s]elect' })
-
     vim.keymap.set('n', '<S-C-u>', function()
       require('opencode').command 'session.half.page.up'
     end, { desc = 'Scroll opencode up' })
@@ -45,8 +38,8 @@ return {
       require('opencode').command 'session.half.page.down'
     end, { desc = 'Scroll opencode down' })
 
-    vim.keymap.set('n', '<leader>ot', function()
+    vim.keymap.set('n', '<leader>oc', function()
       require('opencode').toggle()
-    end, { desc = '[o]pencode [t]oggle' })
+    end, { desc = '[o]pencode [c]hat' })
   end,
 }
