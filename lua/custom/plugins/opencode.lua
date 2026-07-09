@@ -38,8 +38,8 @@ return {
       require('opencode').command 'session.half.page.down'
     end, { desc = 'Scroll opencode down' })
 
-    vim.keymap.set('n', '<leader>oc', function()
+    vim.keymap.set('n', '<leader>ao', function()
       require('opencode').toggle()
-    end, { desc = '[o]pencode [c]hat' })
+    end, { desc = '[a]i [o]pencode chat' })
   end,
 }
