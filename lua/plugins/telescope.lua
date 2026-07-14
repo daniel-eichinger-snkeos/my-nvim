@@ -16,9 +16,10 @@ return {
     },
     config = function()
       local actions = require 'telescope.actions'
+      local fd = vim.fn.has 'win32' == 1 and 'fd' or 'fdfind'
       require('telescope').setup {
         defaults = {
-          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
+          find_command = { fd, '--type', 'f', '--hidden', '--exclude', '.git' },
           mappings = {
             i = {
               ['<C-j>'] = 'move_selection_next',
@@ -42,7 +43,7 @@ return {
       vim.keymap.set('n', '<leader>sf', function()
         builtin.find_files {
           hidden = true,
-          find_command = { 'fdfind', '--type', 'f', '--hidden', '--exclude', '.git' },
+          find_command = { fd, '--type', 'f', '--hidden', '--exclude', '.git' },
         }
       end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
@@ -91,7 +92,7 @@ return {
           prompt_title = 'Open Directory',
           cwd = project_root,
           previewer = false,
-          find_command = { 'fd', '--type', 'd', '--max-depth', '1' },
+          find_command = { fd, '--type', 'd', '--max-depth', '1' },
           attach_mappings = function(_, map)
             local action_state = require 'telescope.actions.state'
             map('i', '<CR>', function(prompt_bufnr)
