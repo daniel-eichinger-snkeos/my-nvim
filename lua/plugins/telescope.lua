@@ -55,6 +55,23 @@ return {
           end,
         }
       end, { desc = '[S]earch by [G]rep (hidden, no .git/node_modules)' })
+
+      vim.keymap.set('n', '<leader>sx', function()
+        builtin.live_grep {
+          additional_args = function()
+            return {
+              '--hidden',
+              '--glob',
+              '!.git/*',
+              '--glob',
+              '!node_modules/*',
+              '--glob',
+              '!**/*test*',
+            }
+          end,
+        }
+      end, { desc = '[S]earch e[X]cluding test files' })
+
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })

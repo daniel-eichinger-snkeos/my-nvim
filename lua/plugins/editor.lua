@@ -67,6 +67,22 @@ return {
           return name == '.git' or name == 'node_modules'
         end,
       },
+      keymaps = {
+        ['<C-h>'] = false,
+        ['<C-l>'] = false,
+        ['<C-j>'] = false,
+        ['<C-k>'] = false,
+      },
+      on_attach = function(bufnr)
+        local map = function(lhs, rhs)
+          vim.keymap.set('n', lhs, rhs, { buffer = bufnr, silent = true })
+        end
+
+        map('<C-h>', '<C-w>h')
+        map('<C-l>', '<C-w>l')
+        map('<C-j>', '<C-w>j')
+        map('<C-k>', '<C-w>k')
+      end,
     },
     dependencies = { { 'echasnovski/mini.icons', opts = {} } },
     lazy = false,
