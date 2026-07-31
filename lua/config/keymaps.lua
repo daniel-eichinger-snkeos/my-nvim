@@ -10,6 +10,20 @@ vim.keymap.set('n', '<C-s>', '<cmd>w<CR>', { desc = 'Save current buffer' })
 -- Paste over selected text without yanking
 vim.keymap.set('x', '<leader>p', [["_dP]])
 
+-- Strip \r (^M) from clipboard register before pasting (fixes Windows line endings)
+local function clean_paste(cmd)
+  return function()
+    local reg = vim.fn.getreg '+'
+    if reg:find('\r', 1, true) then
+      local regtype = vim.fn.getregtype '+'
+      vim.fn.setreg('+', reg:gsub('\r', ''), regtype)
+    end
+    return cmd
+  end
+end
+vim.keymap.set('n', 'p', clean_paste 'p', { expr = true, noremap = true, desc = 'Paste (strip ^M)' })
+vim.keymap.set('n', 'P', clean_paste 'P', { expr = true, noremap = true, desc = 'Paste before (strip ^M)' })
+
 -- Diagnostic quickfix list
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
