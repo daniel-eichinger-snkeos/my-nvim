@@ -148,4 +148,20 @@ return {
       require('mini.surround').setup()
     end,
   },
+  {
+    '0mykull/nvim-fountain',
+    ft = 'fountain', -- Lazy-load only for fountain files
+    config = function()
+      require('nvim-fountain').setup {
+        keymaps = {
+          next_scene = ']]',
+          prev_scene = '[[',
+          uppercase_line = '<S-CR>',
+        },
+        export = {
+          pdf = { options = '--overwrite' },
+        },
+      }
+    end,
+  },
 }
