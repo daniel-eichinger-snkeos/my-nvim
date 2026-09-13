@@ -70,52 +70,22 @@ return {
     end,
     ft = { 'markdown' },
   },
-  {
-    'folke/flash.nvim',
-    event = 'VeryLazy',
-    ---@type Flash.Config
-    opts = {},
-    keys = {
-      {
-        's',
-        mode = { 'n', 'x', 'o' },
-        function()
-          require('flash').jump()
-        end,
-        desc = 'Flash',
-      },
-      {
-        'S',
-        mode = { 'n', 'x', 'o' },
-        function()
-          require('flash').treesitter()
-        end,
-        desc = 'Flash Treesitter',
-      },
-      {
-        'r',
-        mode = 'o',
-        function()
-          require('flash').remote()
-        end,
-        desc = 'Remote Flash',
-      },
-      {
-        'R',
-        mode = { 'o', 'x' },
-        function()
-          require('flash').treesitter_search()
-        end,
-        desc = 'Treesitter Search',
-      },
-      {
-        '<c-s>',
-        mode = { 'c' },
-        function()
-          require('flash').toggle()
-        end,
-        desc = 'Toggle Flash Search',
-      },
+  { -- easily access all Golang docs in nvim
+    'fredrikaverpil/godoc.nvim',
+    version = '*',
+    dependencies = {
+      { 'nvim-telescope/telescope.nvim' }, -- optional
     },
+    build = 'go install github.com/lotusirous/gostdsym/stdsym@latest', -- optional
+    config = function()
+      require('godoc').setup {
+        window = {
+          type = 'vsplit',
+        },
+        picker = {
+          type = 'telescope',
+        },
+      }
+    end,
   },
 }
