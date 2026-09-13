@@ -16,7 +16,9 @@ return {
     },
     config = function()
       local actions = require 'telescope.actions'
-      local fd = vim.fn.has 'win32' == 1 and 'fd' or 'fdfind'
+      local is_windows = vim.fn.has 'win32' == 1
+      local is_macos = vim.fn.has 'macunix' == 1
+      local fd = (is_windows or is_macos) and 'fd' or 'fdfind'
       require('telescope').setup {
         defaults = {
           find_command = { fd, '--type', 'f', '--hidden', '--exclude', '.git' },
@@ -104,7 +106,15 @@ return {
 
       -- Browse and cd into projects from dev folder
       vim.keymap.set('n', '<leader>sp', function()
-        local project_root = vim.fn.has 'win32' == 1 and 'C:/dev' or '/home/daniel/dev2'
+        local project_root
+        if vim.fn.has 'win32' == 1 then
+          project_root = 'C:/dev'
+        elseif vim.fn.has 'macunix' == 1 then
+          project_root = '/Users/daniel_eichinger/Documents/dev'
+        else
+          project_root = '/home/daniel/dev2'
+        end
+
         builtin.find_files(require('telescope.themes').get_dropdown {
           prompt_title = 'Open Directory',
           cwd = project_root,
