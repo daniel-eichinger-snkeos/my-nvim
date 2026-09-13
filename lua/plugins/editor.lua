@@ -1,4 +1,12 @@
 return {
+  { -- tabbing out from parentheses, quotes
+    'abecodes/tabout.nvim',
+    config = function()
+      require('tabout').setup {
+        tabkey = '<Tab>',
+      }
+    end,
+  },
   { -- Detect tabstop and shiftwidth automatically
     'NMAC427/guess-indent.nvim',
     config = function()
@@ -108,7 +116,7 @@ return {
       }
 
       -- Better Around/Inside textobjects
-      -- Examples: va)  yi'  ci"
+      -- Examples: vab (visually select around brackets), yif (yank in function), ciq (change in quotes)
       require('mini.ai').setup { n_lines = 500 }
 
       require('mini.comment').setup()
