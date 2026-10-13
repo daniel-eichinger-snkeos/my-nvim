@@ -16,6 +16,7 @@ return {
     },
     config = function()
       local actions = require 'telescope.actions'
+      local themes = require 'telescope.themes'
       local is_windows = vim.fn.has 'win32' == 1
       local is_macos = vim.fn.has 'macunix' == 1
       local fd = (is_windows or is_macos) and 'fd' or 'fdfind'
@@ -40,16 +41,14 @@ return {
       pcall(require('telescope').load_extension, 'ui-select')
 
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      -- most used fuzzy finders
       vim.keymap.set('n', '<leader>sf', function()
-        builtin.find_files {
-          hidden = true,
-          find_command = { fd, '--type', 'f', '--hidden', '--exclude', '.git' },
-        }
+        builtin.git_files(themes.get_dropdown {
+          prompt_title = 'Search Files',
+          previewer = false,
+        })
       end, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+
       vim.keymap.set('n', '<leader>sg', function()
         builtin.live_grep {
           additional_args = function()
@@ -75,13 +74,21 @@ return {
       end, { desc = '[S]earch e[X]cluding test files' })
 
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        builtin.buffers(themes.get_dropdown {
+          prompt_title = 'Search Buffers',
+          previewer = false,
+        })
+      end, { desc = 'Search buffers' })
+
+      -- others
+      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>sc', builtin.colorscheme, { desc = '[S]earch [C]olorscheme' })
-
-      -- Git status via Telescope
-      vim.keymap.set('n', '<leader>gs', builtin.git_status, { desc = '[G]it [S]tatus' })
 
       -- Fuzzy search in current buffer
       vim.keymap.set('n', '<leader>/', function()
