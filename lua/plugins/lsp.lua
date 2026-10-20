@@ -113,7 +113,15 @@ return {
       local capabilities = require('blink.cmp').get_lsp_capabilities()
 
       local servers = {
-        gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              env = {
+                GOFLAGS = '-tags=integration',
+              },
+            },
+          },
+        },
         powershell_es = {
           settings = {
             powershell = {
@@ -138,16 +146,17 @@ return {
       vim.list_extend(ensure_installed, { 'stylua' })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      -- mason-lspconfig auto-enables every installed server via vim.lsp.enable() using whatever vim.lsp.config()
+      -- has registered. So we register our overrides first, then let
+      -- automatic_enable (default true) take care of enabling them.
+      for server_name, server in pairs(servers) do
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        vim.lsp.config(server_name, server)
+      end
+
       require('mason-lspconfig').setup {
         ensure_installed = {},
         automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
       }
 
       -- Enable Roslyn LSP for C# (installed externally)

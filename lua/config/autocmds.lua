@@ -45,6 +45,16 @@ vim.api.nvim_create_autocmd('FileType', {
   command = 'wincmd L',
 })
 
+-- `gd` jumps to the tag under the cursor in help docs (fallback for
+-- terminals that can't send <C-]>); `gD` pops back up the tag stack
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'help',
+  callback = function(event)
+    vim.keymap.set('n', 'gd', '<C-]>', { buffer = event.buf, desc = 'Jump to help tag' })
+    vim.keymap.set('n', 'gD', '<C-t>', { buffer = event.buf, desc = 'Pop help tag stack' })
+  end,
+})
+
 -- Syntax highlighting for *.hcl.tpl files
 vim.api.nvim_create_autocmd('BufRead', {
   group = vim.api.nvim_create_augroup('hcl_tpl_ft', { clear = true }),
