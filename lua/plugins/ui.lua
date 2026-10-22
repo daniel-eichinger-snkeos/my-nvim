@@ -1,20 +1,47 @@
 return {
   {
-    'rebelot/kanagawa.nvim',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
-    colors = {
-      theme = {
-        all = {
-          ui = {
-            bg_gutter = 'none',
-          },
+    opts = {
+      flavour = 'mocha',
+      background = {
+        light = 'latte',
+        dark = 'mocha',
+      },
+      transparent_background = false,
+      integrations = {
+        cmp = true,
+        gitsigns = true,
+        nvimtree = true,
+        treesitter = true,
+        telescope = true,
+        native_lsp = {
+          enabled = true,
         },
       },
     },
-    config = function()
-      vim.cmd.colorscheme 'kanagawa'
+    config = function(_, opts)
+      require('catppuccin').setup(opts)
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
+  -- {
+  --   'rebelot/kanagawa.nvim',
+  --   priority = 1000,
+  --   colors = {
+  --     theme = {
+  --       all = {
+  --         ui = {
+  --           bg_gutter = 'none',
+  --         },
+  --       },
+  --     },
+  --   },
+  --   config = function()
+  --     vim.cmd.colorscheme 'kanagawa'
+  --   end,
+  -- },
   { -- Animated cursor movement
     'sphamba/smear-cursor.nvim',
     opts = {
