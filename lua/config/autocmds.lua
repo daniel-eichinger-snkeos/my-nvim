@@ -32,8 +32,10 @@ vim.api.nvim_create_autocmd('TermOpen', {
 })
 
 -- Enable treesitter highlighting for specific filetypes
+-- ('http' is excluded: nvim-restclient ships classic syntax/http.vim
+-- highlighting instead of a treesitter grammar)
 vim.api.nvim_create_autocmd('FileType', {
-  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp', 'http' },
+  pattern = { 'go', 'terraform', 'gomod', 'lua', 'csharp' },
   callback = function()
     vim.treesitter.start()
   end,

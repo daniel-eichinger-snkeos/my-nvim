@@ -40,18 +40,19 @@ return {
     },
     opts = {},
   },
-  { -- HTTP REST client for .http files
-    'mistweaverco/kulala.nvim',
-    keys = {
-      { '<leader>rs', desc = 'Send request' },
-      { '<leader>rj', desc = 'Send all requests' },
-      { '<leader>rb', desc = 'Open scratchpad' },
-    },
+  { -- Your own HTTP REST client for .http files
+    dir = vim.fn.expand '~/dev2/nvim-restclient',
+    name = 'nvim-restclient',
+    main = 'restclient', -- so `opts` calls require('restclient').setup(opts)
+    dependencies = { 'nvim-lua/plenary.nvim' },
     ft = { 'http', 'rest' },
     opts = {
-      global_keymaps = true,
-      global_keymaps_prefix = '<leader>r',
-      kulala_keymaps_prefix = '',
+      split = 'vertical',
+    },
+    keys = {
+      { '<leader>rs', '<cmd>RestClientRun<cr>', desc = 'Send request' },
+      { '<leader>rs', ':RestClientRun<cr>', mode = 'v', desc = 'Send request (selection)' },
+      { '<leader>rc', '<cmd>RestClientCancel<cr>', desc = 'Cancel request' },
     },
   },
   { -- Enhanced quickfix list
